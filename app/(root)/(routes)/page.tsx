@@ -3,7 +3,7 @@
 import { useStoreModal } from "@/hooks/use-store-modal";
 import { useEffect } from "react";
 
-export default function SetupLayout() {
+export default function SetupPage() {
   const onOpen = useStoreModal((state) => state.onOpen);
   const isOpen = useStoreModal((state) => state.isOpen);
 
@@ -13,9 +13,5 @@ export default function SetupLayout() {
     }
   }, [isOpen, onOpen]);
 
-  return (
-    <div className="p-4 bg-orange-300 flex justify-between items-center">
-      HomePage
-    </div>
-  );
+  return null;
 }

@@ -35,21 +35,15 @@ const StoreModal = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true);
 
-      toast.promise(axios.post("/api/stores", values), {
-        loading: "Loading",
-        success: (response) => {
-          storeModals.onClose();
-          console.log(response.data);
-          setIsLoading(false);
-          return "Store created successfully";
-        },
-        error: "Failed to create store",
-      });
+      const response = await axios.post("/api/stores", values);
+
+      window.location.assign(`/${response.data.id}`);
     } catch (error) {
+      toast.error("Something went wrong.");
       console.log(error);
     }
   };
