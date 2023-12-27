@@ -1,5 +1,7 @@
 "use client";
 
+import AlertModal from "@/components/own/modals/alert-modal";
+import ApiAlert from "@/components/ui/api-alert";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -51,7 +53,7 @@ const SettingsForm = ({ initialData }: SettingFormProps) => {
 
       const response = await axios.patch(
         `/api/stores/${params.storeId}`,
-        values
+        values,
       );
       console.log(response);
 
@@ -65,8 +67,49 @@ const SettingsForm = ({ initialData }: SettingFormProps) => {
     }
   };
 
+  // const onDelete = async () => {
+  //   try {
+  //     setIsLoading(true);
+
+  //     const response = await axios.delete(`/api/stores/${params.storeId}`);
+  //     console.log("Berhasil hapus data", response);
+
+  //     router.refresh();
+  //     router.push("/");
+
+  //     toast.success("Store deleted");
+  //   } catch (error) {
+  //     toast.error("Make sure you removed all products and categories first");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  const onDelete = async () => {
+    setIsLoading(true);
+
+    toast
+      .promise(axios.delete(`/api/stores/${params.storeId}`), {
+        loading: "Deleting...",
+        success: (res) => {
+          console.log("Berhasil hapus data", res);
+          router.refresh();
+          router.push("/");
+          return "Store deleted";
+        },
+        error: "Make sure you removed all products and categories first",
+      })
+      .finally(() => setIsLoading(false));
+  };
+
   return (
     <>
+      <AlertModal
+        isOpen={isOpen}
+        isLoading={isLoading}
+        onClose={() => setIsOpen(false)}
+        onConfirm={onDelete}
+      />
       <div className="flex items-center justify-between">
         <Heading title="Settings" description="Manage Store" />
         <Button
@@ -82,7 +125,7 @@ const SettingsForm = ({ initialData }: SettingFormProps) => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 w-full"
+          className="w-full space-y-8"
         >
           <div className="grid grid-cols-3 gap-8">
             <FormField
@@ -108,6 +151,12 @@ const SettingsForm = ({ initialData }: SettingFormProps) => {
           </Button>
         </form>
       </Form>
+      <Separator />
+      <ApiAlert
+        title="NEXT_PUBLIC_API_URL"
+        description={`${origin}/api/${params.storeId}`}
+        variant="public"
+      />
     </>
   );
 };
