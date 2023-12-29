@@ -14,6 +14,7 @@ import {
 import Heading from "@/components/ui/heading";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import useOrigin from "@/hooks/use-origin";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type Store } from "@prisma/client";
@@ -25,13 +26,12 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import * as z from "zod";
 
-interface SettingFormProps {
-  initialData: Store;
-}
-
 const formSchema = z.object({
   name: z.string().min(1),
 });
+interface SettingFormProps {
+  initialData: Store;
+}
 
 type SettingFormValues = z.infer<typeof formSchema>;
 
@@ -41,6 +41,7 @@ const SettingsForm = ({ initialData }: SettingFormProps) => {
 
   const params = useParams();
   const router = useRouter();
+  const origin = useOrigin();
 
   const form = useForm<SettingFormValues>({
     resolver: zodResolver(formSchema),

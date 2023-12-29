@@ -19,6 +19,11 @@ const MainNav = ({
       active: pathname === `/${params.storeId}`,
     },
     {
+      href: `/${params.storeId}/billboard`,
+      label: "Billboard",
+      active: pathname === `/${params.storeId}/billboard`,
+    },
+    {
       href: `/${params.storeId}/settings`,
       label: "Settings",
       active: pathname === `/${params.storeId}/settings`,
@@ -35,7 +40,7 @@ const MainNav = ({
             "text-sm font-medium transition-colors hover:text-primary",
             route.active
               ? "text-black dark:text-white"
-              : "text-muted-foreground"
+              : "text-muted-foreground",
           )}
         >
           {route.label}
