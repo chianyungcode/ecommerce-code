@@ -20,21 +20,21 @@ export async function POST(
     }
 
     if (!imageUrl) {
-      return new NextResponse("Image is required", { status: 400 });
+      return new NextResponse("Image URL is required", { status: 400 });
     }
 
     if (!params.storeId) {
       return new NextResponse("Store ID is required", { status: 400 });
     }
 
-    const storeByUserID = await prismadb.store.findFirst({
+    const storeByUserId = await prismadb.store.findFirst({
       where: {
         id: params.storeId,
         userId,
       },
     });
 
-    if (!storeByUserID) {
+    if (!storeByUserId) {
       return new NextResponse("Unauthorized", { status: 403 });
     }
 
@@ -58,13 +58,13 @@ export async function GET(
   { params }: { params: { storeId: string } },
 ) {
   try {
-    const billboard = await prismadb.billboard.findMany({
+    const billboards = await prismadb.billboard.findMany({
       where: {
         storeId: params.storeId,
       },
     });
 
-    return NextResponse.json(billboard);
+    return NextResponse.json(billboards);
   } catch (error) {
     console.log("API ERROR [GET]: /api/[storeId]/billboards", error);
     return new NextResponse("Failed to create", { status: 500 });
