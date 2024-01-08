@@ -77,6 +77,7 @@ const BillboardForm = ({ initialData }: BillboardFormProps) => {
       }
 
       router.refresh();
+      router.push(`/${params.storeId}/billboard`);
 
       toast.success(`${toastMessage}`);
     } catch (error) {
@@ -85,24 +86,6 @@ const BillboardForm = ({ initialData }: BillboardFormProps) => {
       setIsLoading(false);
     }
   };
-
-  // const onDelete = async () => {
-  //   try {
-  //     setIsLoading(true);
-
-  //     const response = await axios.delete(`/api/stores/${params.storeId}`);
-  //     console.log("Berhasil hapus data", response);
-
-  //     router.refresh();
-  //     router.push("/");
-
-  //     toast.success("Store deleted");
-  //   } catch (error) {
-  //     toast.error("Make sure you removed all products and categories first");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
 
   const onDelete = async () => {
     setIsLoading(true);
@@ -115,7 +98,7 @@ const BillboardForm = ({ initialData }: BillboardFormProps) => {
           success: (res) => {
             console.log("Berhasil hapus data", res);
             router.refresh();
-            router.push("/");
+            router.push(`/${params.storeId}/billboard`);
             return "Store deleted";
           },
           error:
