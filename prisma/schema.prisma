@@ -11,24 +11,38 @@ generator client {
 }
 
 model Store {
-  id        String   @id @default(uuid())
-  name      String
-  userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  id         String      @id @default(uuid())
+  name       String
+  userId     String
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
   billboards Billboard[] @relation("StoreToBillboard")
+  Category   Category[]  @relation("StoreToCategory")
 }
 
 model Billboard {
-  id        String   @id @default(uuid())
+  id        String     @id @default(uuid())
   storeId   String
   label     String
   imageUrl  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  store Store @relation("StoreToBillboard", fields: [storeId], references: [id])
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  store     Store      @relation("StoreToBillboard", fields: [storeId], references: [id])
+  Category  Category[] @relation("BillboardToCategory")
 
   @@index([storeId])
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  storeId     String
+  billboardId String
+  name        String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  store       Store     @relation("StoreToCategory", fields: [storeId], references: [id])
+  billboard   Billboard @relation("BillboardToCategory", fields: [billboardId], references: [id])
+
+  @@index([storeId])
+  @@index([billboardId])
 }

@@ -4,29 +4,32 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
-  { params }: { params: { storeId: string; billboardId: string } },
+  { params }: { params: { categoryId: string } },
 ) {
   try {
-    if (!params.billboardId) {
+    if (!params.categoryId) {
       return new NextResponse("Billboard id is required", { status: 400 });
     }
 
-    const billboard = await prismadb.billboard.findUnique({
+    const categories = await prismadb.category.findUnique({
       where: {
-        id: params.billboardId,
+        id: params.categoryId,
       },
     });
 
-    return NextResponse.json(billboard);
+    return NextResponse.json(categories);
   } catch (error) {
-    console.log("[BILLBOARD_GET]", error);
+    console.log(
+      "API ERROR [GET]: /api/[storeId]/categories/[categoryId]",
+      error,
+    );
     return new NextResponse("Internal server error", { status: 500 });
   }
 }
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { billboardId: string; storeId: string } },
+  { params }: { params: { categoryId: string; storeId: string } },
 ) {
   try {
     const { userId } = auth();
@@ -35,8 +38,8 @@ export async function DELETE(
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
-    if (!params.billboardId) {
-      return new NextResponse("Billboard id is required", { status: 400 });
+    if (!params.categoryId) {
+      return new NextResponse("Category ID is required", { status: 400 });
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -50,42 +53,45 @@ export async function DELETE(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const billboard = await prismadb.billboard.delete({
+    const categories = await prismadb.category.delete({
       where: {
-        id: params.billboardId,
+        id: params.categoryId,
       },
     });
 
-    return NextResponse.json(billboard);
+    return NextResponse.json(categories);
   } catch (error) {
-    console.log("[BILLBOARD_DELETE]", error);
+    console.log(
+      "API ERROR [DELETE]: /api/[storeId]/categories/[categoryId]",
+      error,
+    );
     return new NextResponse("Internal error", { status: 500 });
   }
 }
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { storeId: string; billboardId: string } },
+  { params }: { params: { storeId: string; categoryId: string } },
 ) {
   try {
     const { userId } = auth();
 
-    const { label, imageUrl } = await req.json();
+    const { name, billboardId } = await req.json();
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 401 });
     }
 
-    if (!label) {
-      return new NextResponse("Label is required", { status: 400 });
+    if (!name) {
+      return new NextResponse("Name is required", { status: 400 });
     }
 
-    if (!imageUrl) {
-      return new NextResponse("Image URL is required", { status: 400 });
-    }
-
-    if (!params.billboardId) {
+    if (!billboardId) {
       return new NextResponse("Billboard ID is required", { status: 400 });
+    }
+
+    if (!params.categoryId) {
+      return new NextResponse("Category ID is required", { status: 400 });
     }
 
     const storeByUserId = await prismadb.store.findFirst({
@@ -96,23 +102,23 @@ export async function PATCH(
     });
 
     if (!storeByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse("Unauthorized", { status: 403 });
     }
 
-    const updatedBilboard = await prismadb.billboard.updateMany({
+    const updatedCategory = await prismadb.category.updateMany({
       where: {
-        id: params.billboardId,
+        id: params.categoryId,
       },
       data: {
-        label,
-        imageUrl,
+        name,
+        billboardId,
       },
     });
 
-    return NextResponse.json(updatedBilboard);
+    return NextResponse.json(updatedCategory);
   } catch (error) {
     console.log(
-      "API ERROR [PATCH]: /api/[storeId]/billboards/[billboardId]",
+      "API ERROR [PATCH]: /api/[storeId]/categories/[categoryId]",
       error,
     );
     return new NextResponse("Failed to update", { status: 500 });
