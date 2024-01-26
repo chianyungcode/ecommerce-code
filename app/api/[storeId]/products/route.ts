@@ -101,7 +101,12 @@ export async function GET(
         categoryId,
         colorId,
         sizeId,
-        isFeatured: isFeatured ? true : undefined,
+        isFeatured:
+          isFeatured === "true"
+            ? true
+            : isFeatured === "false"
+              ? false
+              : undefined,
         isArchived: false,
       },
       include: {
